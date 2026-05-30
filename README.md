@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LunchDecisionStudio
 
-## Getting Started
+Mobile-first lunch picker for teams — choose where to eat in seconds, filtered by how far you're willing to walk.
 
-First, run the development server:
+**Repo:** https://github.com/arnon-aroon/lunch-picker
+
+## Stack
+
+| Layer | Technology |
+| --- | --- |
+| Framework | [Next.js 16](https://nextjs.org) (App Router) |
+| UI | [Tailwind CSS 4](https://tailwindcss.com) |
+| Language | TypeScript |
+| Database | SQLite via [Prisma](https://www.prisma.io) *(schema and migrations added in a follow-up issue)* |
+
+## Prerequisites
+
+- **Node.js 20+** (LTS recommended)
+- **npm** (bundled with Node)
+
+## Quick start
 
 ```bash
+git clone https://github.com/arnon-aroon/lunch-picker.git
+cd lunch-picker
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server (hot reload) |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build (run `build` first) |
+| `npm run lint` | Run ESLint |
 
-## Learn More
+## Project layout
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/app/          Next.js App Router pages and layouts
+public/           Static assets
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Database setup (Prisma + SQLite)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Prisma is part of the planned stack but not yet wired in this repo. When the schema lands, setup will look like:
 
-## Deploy on Vercel
+```bash
+npx prisma migrate dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Until then, the app runs without a database.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Environment variables
+
+No environment variables are required for local development today. When Prisma is added, copy `.env.example` (if present) to `.env` and set `DATABASE_URL`.
+
+## Contributing
+
+Work is tracked in Paperclip under the **LunchDecisionStudio** board. Open a focused PR against `main` for each ticket.
