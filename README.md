@@ -11,7 +11,7 @@ Mobile-first lunch picker for teams — choose where to eat in seconds, filtered
 | Framework | [Next.js 16](https://nextjs.org) (App Router) |
 | UI | [Tailwind CSS 4](https://tailwindcss.com) |
 | Language | TypeScript |
-| Database | SQLite via [Prisma](https://www.prisma.io) *(schema and migrations added in a follow-up issue)* |
+| Database | SQLite via [Prisma](https://www.prisma.io) |
 
 ## Prerequisites
 
@@ -23,18 +23,30 @@ Mobile-first lunch picker for teams — choose where to eat in seconds, filtered
 ```bash
 git clone https://github.com/arnon-aroon/lunch-picker.git
 cd lunch-picker
-npm install
+cp .env.example .env   # postinstall also creates .env if missing
+npm ci
+npm run db:migrate
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+For phone/LAN testing, set your machine IP in `.env`:
+
+```bash
+NEXT_DEV_ALLOWED_ORIGINS=192.168.1.237
+```
+
+Then open `http://192.168.1.237:3000` from the device on the same network.
+
 ## Scripts
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Start the development server (hot reload) |
+| `npm run dev` | Start the development server (runs `prisma generate` first) |
 | `npm run build` | Create a production build |
+| `npm run db:migrate` | Apply Prisma migrations (SQLite) |
+| `npm run db:seed` | Seed sample lunch spots |
 | `npm run start` | Serve the production build (run `build` first) |
 | `npm run lint` | Run ESLint |
 
@@ -45,19 +57,9 @@ src/app/          Next.js App Router pages and layouts
 public/           Static assets
 ```
 
-## Database setup (Prisma + SQLite)
-
-Prisma is part of the planned stack but not yet wired in this repo. When the schema lands, setup will look like:
-
-```bash
-npx prisma migrate dev
-```
-
-Until then, the app runs without a database.
-
 ## Environment variables
 
-No environment variables are required for local development today. When Prisma is added, copy `.env.example` (if present) to `.env` and set:
+Copy `.env.example` to `.env` (or rely on `postinstall` to create it). Required:
 
 ```bash
 DATABASE_URL="file:./dev.db"
