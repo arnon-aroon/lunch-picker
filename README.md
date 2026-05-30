@@ -23,6 +23,7 @@ Mobile-first lunch picker for teams — choose where to eat in seconds, filtered
 ```bash
 git clone https://github.com/arnon-aroon/lunch-picker.git
 cd lunch-picker
+cp .env.example .env   # postinstall also creates .env if missing
 npm ci
 npm run db:migrate
 npm run dev
@@ -32,11 +33,33 @@ npm run dev
 
 Optional: `npm run db:seed` for sample lunch spots.
 
+For phone/LAN testing, open `http://<your-lan-ip>:3000` on the same Wi‑Fi. `next.config.ts` allows common private LAN ranges by default. To add a specific host:
+
+```bash
+NEXT_DEV_ALLOWED_ORIGINS=192.168.1.237
+```
+
+**If Near/Far buttons do not respond on a phone in dev mode**, client JavaScript may be blocked by Next.js cross-origin dev restrictions. Either set `NEXT_DEV_ALLOWED_ORIGINS` as above, or use production mode on your LAN:
+
+```bash
+npm run build && npm run start -- -H 0.0.0.0
+```
+
+## Sample data
+
+Seed demo Near/Far spots (only runs when the database is empty):
+
+```bash
+npm run db:seed
+```
+
+Or add spots in the app UI (form appears when a list is empty, or under **Add another spot**).
+
 ## Scripts
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Generate Prisma client and start the dev server (hot reload) |
+| `npm run dev` | Start the development server (runs `prisma generate` first) |
 | `npm run build` | Generate Prisma client and create a production build |
 | `npm run start` | Serve the production build (run `build` first) |
 | `npm run lint` | Run ESLint |
@@ -58,11 +81,11 @@ After `npm ci`, apply migrations once:
 npm run db:migrate
 ```
 
-The SQLite file is created at `prisma/dev.db` (see `.env.example`). No `.env` file is required for local dev — defaults match `prisma.config.ts` and `src/lib/prisma.ts`.
+The SQLite file is created at `prisma/dev.db` (see `.env.example`).
 
 ## Environment variables
 
-Optional. Copy `.env.example` to `.env` to override the database path:
+Copy `.env.example` to `.env` (or rely on `postinstall` to create it). Defaults work for local dev:
 
 ```bash
 DATABASE_URL="file:./prisma/dev.db"
@@ -91,7 +114,7 @@ The app is a responsive web page with no custom URL schemes or native bridges in
 | iOS | `WKWebView` | Load the deployed HTTPS URL; enable `viewport-fit=cover` for notch safe areas |
 | Android | `WebView` | Same URL; handle back gesture if you add in-app navigation later |
 
-When the mobile shell lands, the root layout sets `viewport-fit: cover` and components use `env(safe-area-inset-*)` for header/footer padding on notched devices.
+When the mobile shell lands, the root layout sets `viewport-fit=cover` and components use `env(safe-area-inset-*)` for header/footer padding on notched devices.
 
 ## Contributing
 

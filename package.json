@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next dev",
+    "dev": "next dev",
+    "predev": "prisma generate",
     "build": "prisma generate && next build",
+    "postinstall": "node scripts/ensure-env.mjs && prisma generate",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
+    "db:migrate": "node scripts/ensure-env.mjs && prisma migrate dev",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "npx tsx prisma/seed.ts"

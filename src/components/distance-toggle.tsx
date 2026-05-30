@@ -27,7 +27,7 @@ export function DistanceToggle({ value, onChange }: DistanceToggleProps) {
             type="button"
             aria-pressed={selected}
             onClick={() => onChange(option.value)}
-            className={`rounded-lg px-3 py-2.5 text-left transition-colors ${
+            className={`min-h-11 rounded-lg px-3 py-2.5 text-left transition-colors touch-manipulation select-none active:scale-[0.98] ${
               selected
                 ? "bg-background shadow-sm ring-1 ring-foreground/10"
                 : "text-foreground/70 hover:text-foreground"
