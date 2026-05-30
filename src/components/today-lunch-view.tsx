@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { pickRandomSpot } from "@/app/actions/pick-random";
+import type { SpotDTO } from "@/lib/spots";
 import { DistanceToggle, type DistanceBucket } from "./distance-toggle";
+import { LunchSpotCard } from "./lunch-spot-card";
 import { MobileShell } from "./mobile-shell";
 
 const EMPTY_COPY: Record<DistanceBucket, { title: string; body: string }> = {
@@ -15,22 +18,85 @@ const EMPTY_COPY: Record<DistanceBucket, { title: string; body: string }> = {
   },
 };
 
-export function TodayLunchView() {
+type TodayLunchViewProps = {
+  spots: SpotDTO[];
+};
+
+export function TodayLunchView({ spots }: TodayLunchViewProps) {
   const [distance, setDistance] = useState<DistanceBucket>("near");
+  const [picked, setPicked] = useState<Pick<SpotDTO, "id" | "name" | "notes"> | null>(
+    null,
+  );
+  const [isPending, startTransition] = useTransition();
+
+  const filtered = spots.filter((spot) => spot.bucket === distance);
   const empty = EMPTY_COPY[distance];
+  const canPick = filtered.length > 0 && !isPending;
+
+  function handleDistanceChange(next: DistanceBucket) {
+    setDistance(next);
+    setPicked(null);
+  }
+
+  function handlePickRandom() {
+    startTransition(async () => {
+      const result = await pickRandomSpot(distance);
+      setPicked(result);
+    });
+  }
 
   return (
-    <MobileShell>
-      <DistanceToggle value={distance} onChange={setDistance} />
+    <MobileShell
+      footer={
+        <button
+          type="button"
+          disabled={!canPick}
+          onClick={handlePickRandom}
+          className="w-full rounded-xl bg-accent px-4 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {isPending ? "Picking…" : "Pick random"}
+        </button>
+      }
+    >
+      <DistanceToggle value={distance} onChange={handleDistanceChange} />
 
-      <section
-        aria-label="Lunch options"
-        className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-foreground/15 px-6 py-12 text-center"
-      >
-        <p className="text-sm font-medium text-foreground/75">{empty.title}</p>
-        <p className="max-w-[16rem] text-sm leading-relaxed text-foreground/50">
-          {empty.body}
-        </p>
+      {picked ? (
+        <section
+          aria-live="polite"
+          aria-label="Today's pick"
+          className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-4 text-center"
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-accent">
+            Today&apos;s pick
+          </p>
+          <p className="mt-1 text-xl font-semibold">{picked.name}</p>
+          {picked.notes ? (
+            <p className="mt-1 text-sm text-foreground/65">{picked.notes}</p>
+          ) : null}
+        </section>
+      ) : null}
+
+      <section aria-label="Lunch options" className="flex flex-1 flex-col gap-2">
+        {filtered.length === 0 ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-foreground/15 px-6 py-12 text-center">
+            <p className="text-sm font-medium text-foreground/75">{empty.title}</p>
+            <p className="max-w-[16rem] text-sm leading-relaxed text-foreground/50">
+              {empty.body}
+            </p>
+          </div>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {filtered.map((spot) => (
+              <li key={spot.id}>
+                <LunchSpotCard
+                  name={spot.name}
+                  note={spot.notes}
+                  selected={picked?.id === spot.id}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </MobileShell>
   );
