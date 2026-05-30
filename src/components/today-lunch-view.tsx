@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { pickRandomSpot } from "@/app/actions/pick-random";
 import type { SpotDTO } from "@/lib/spots";
+import { AddSpotForm } from "./add-spot-form";
 import { DistanceToggle, type DistanceBucket } from "./distance-toggle";
 import { LunchSpotCard } from "./lunch-spot-card";
 import { MobileShell } from "./mobile-shell";
@@ -52,13 +53,24 @@ export function TodayLunchView({ spots }: TodayLunchViewProps) {
           type="button"
           disabled={!canPick}
           onClick={handlePickRandom}
-          className="w-full rounded-xl bg-accent px-4 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+          className="min-h-11 w-full touch-manipulation rounded-xl bg-accent px-4 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
         >
           {isPending ? "Picking…" : "Pick random"}
         </button>
       }
     >
       <DistanceToggle value={distance} onChange={handleDistanceChange} />
+
+      {spots.length > 0 ? (
+        <details className="rounded-xl border border-foreground/10 bg-foreground/[0.02] px-4 py-3">
+          <summary className="cursor-pointer touch-manipulation text-sm font-medium text-foreground/80">
+            Add another spot
+          </summary>
+          <div className="mt-3">
+            <AddSpotForm defaultBucket={distance} />
+          </div>
+        </details>
+      ) : null}
 
       {picked ? (
         <section
@@ -78,11 +90,14 @@ export function TodayLunchView({ spots }: TodayLunchViewProps) {
 
       <section aria-label="Lunch options" className="flex flex-1 flex-col gap-2">
         {filtered.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-foreground/15 px-6 py-12 text-center">
-            <p className="text-sm font-medium text-foreground/75">{empty.title}</p>
-            <p className="max-w-[16rem] text-sm leading-relaxed text-foreground/50">
-              {empty.body}
-            </p>
+          <div className="flex flex-1 flex-col gap-4">
+            <div className="rounded-xl border border-dashed border-foreground/15 px-6 py-8 text-center">
+              <p className="text-sm font-medium text-foreground/75">{empty.title}</p>
+              <p className="mx-auto mt-1 max-w-[16rem] text-sm leading-relaxed text-foreground/50">
+                {empty.body}
+              </p>
+            </div>
+            <AddSpotForm defaultBucket={distance} />
           </div>
         ) : (
           <ul className="flex flex-col gap-2">

@@ -37,7 +37,23 @@ For phone/LAN testing, set your machine IP in `.env`:
 NEXT_DEV_ALLOWED_ORIGINS=192.168.1.237
 ```
 
-Then open `http://192.168.1.237:3000` from the device on the same network.
+Then restart `npm run dev` and open `http://192.168.1.237:3000`.
+
+**If Near/Far buttons do not respond on a phone in dev mode**, client JavaScript may be blocked by Next.js cross-origin dev restrictions. Either set `NEXT_DEV_ALLOWED_ORIGINS` as above, or use production mode on your LAN:
+
+```bash
+npm run build && npm run start -- -H 0.0.0.0
+```
+
+## Sample data
+
+Seed demo Near/Far spots (only runs when the database is empty):
+
+```bash
+npm run db:seed
+```
+
+Or add spots in the app UI (form appears when a list is empty, or under **Add another spot**).
 
 ## Scripts
 
