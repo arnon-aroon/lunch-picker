@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum DistanceBucket {
+  NEAR
+  FAR
+}
+
+model Spot {
+  id        String         @id @default(cuid())
+  name      String
+  bucket    DistanceBucket
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  picks     Pick[]
+}
+
+model Pick {
+  id       String   @id @default(cuid())
+  spotId   String
+  spot     Spot     @relation(fields: [spotId], references: [id], onDelete: Cascade)
+  pickedAt DateTime @default(now())
+
+  @@index([pickedAt])
+}
