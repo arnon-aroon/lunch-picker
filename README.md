@@ -11,7 +11,7 @@ Mobile-first lunch picker for teams — choose where to eat in seconds, filtered
 | Framework | [Next.js 16](https://nextjs.org) (App Router) |
 | UI | [Tailwind CSS 4](https://tailwindcss.com) |
 | Language | TypeScript |
-| Database | SQLite via [Prisma](https://www.prisma.io) *(schema and migrations added in a follow-up issue)* |
+| Database | SQLite via [Prisma](https://www.prisma.io) |
 
 ## Prerequisites
 
@@ -23,20 +23,25 @@ Mobile-first lunch picker for teams — choose where to eat in seconds, filtered
 ```bash
 git clone https://github.com/arnon-aroon/lunch-picker.git
 cd lunch-picker
-npm install
+npm ci
+npm run db:migrate
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+`npm ci` runs `prisma generate` via `postinstall`; `npm run dev` regenerates the client before starting Next.js. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+Optional: `npm run db:seed` for sample lunch spots.
 
 ## Scripts
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Start the development server (hot reload) |
-| `npm run build` | Create a production build |
+| `npm run dev` | Generate Prisma client and start the dev server (hot reload) |
+| `npm run build` | Generate Prisma client and create a production build |
 | `npm run start` | Serve the production build (run `build` first) |
 | `npm run lint` | Run ESLint |
+| `npm run db:migrate` | Apply Prisma migrations to the local SQLite database |
+| `npm run db:seed` | Seed sample spots (optional) |
 
 ## Project layout
 
@@ -47,20 +52,20 @@ public/           Static assets
 
 ## Database setup (Prisma + SQLite)
 
-Prisma is part of the planned stack but not yet wired in this repo. When the schema lands, setup will look like:
+After `npm ci`, apply migrations once:
 
 ```bash
-npx prisma migrate dev
+npm run db:migrate
 ```
 
-Until then, the app runs without a database.
+The SQLite file is created at `prisma/dev.db` (see `.env.example`). No `.env` file is required for local dev — defaults match `prisma.config.ts` and `src/lib/prisma.ts`.
 
 ## Environment variables
 
-No environment variables are required for local development today. When Prisma is added, copy `.env.example` (if present) to `.env` and set:
+Optional. Copy `.env.example` to `.env` to override the database path:
 
 ```bash
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="file:./prisma/dev.db"
 ```
 
 ## Mobile & webview
@@ -72,6 +77,8 @@ LunchDecisionStudio is designed as a **single-screen, phone-width UI** (max ~448
 1. Run `npm run dev` on your machine.
 2. Find your LAN IP (`ipconfig getifaddr en0` on macOS, `hostname -I` on Linux).
 3. On your phone (same Wi‑Fi), open `http://<your-ip>:3000`.
+
+`next.config.ts` includes `allowedDevOrigins` for common private LAN ranges (`192.168.*.*`, `10.*.*.*`, `172.*.*.*`) so dev HMR and `/_next` assets are not blocked cross-origin.
 
 Alternatively, use Chrome DevTools → **Toggle device toolbar** and pick a phone preset (e.g. iPhone 14).
 
