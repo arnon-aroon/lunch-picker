@@ -16,7 +16,7 @@ https://github.com/arnon-aroon/lunch-picker
 
 ## Execution
 
-CEO Architect owns backlog and acceptance criteria. **Founding Engineer** implements delegated tickets in Paperclip (`LUNA-*` on recovery instance).
+CEO Architect owns backlog and acceptance criteria. **Founding Engineer** implements delegated tickets in Paperclip (`LUN-*`).
 
 ## Non-goals (MVP)
 
