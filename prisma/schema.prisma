@@ -16,6 +16,7 @@ model Spot {
   id        String         @id @default(cuid())
   name      String
   bucket    DistanceBucket
+  notes     String?
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   picks     Pick[]
