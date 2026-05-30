@@ -57,7 +57,34 @@ Until then, the app runs without a database.
 
 ## Environment variables
 
-No environment variables are required for local development today. When Prisma is added, copy `.env.example` (if present) to `.env` and set `DATABASE_URL`.
+No environment variables are required for local development today. When Prisma is added, copy `.env.example` (if present) to `.env` and set:
+
+```bash
+DATABASE_URL="file:./dev.db"
+```
+
+## Mobile & webview
+
+LunchDecisionStudio is designed as a **single-screen, phone-width UI** (max ~448px) — no desktop sidebar or multi-page navigation for MVP.
+
+### Test on a phone
+
+1. Run `npm run dev` on your machine.
+2. Find your LAN IP (`ipconfig getifaddr en0` on macOS, `hostname -I` on Linux).
+3. On your phone (same Wi‑Fi), open `http://<your-ip>:3000`.
+
+Alternatively, use Chrome DevTools → **Toggle device toolbar** and pick a phone preset (e.g. iPhone 14).
+
+### Webview embedding (future)
+
+The app is a responsive web page with no custom URL schemes or native bridges in MVP. To wrap it later:
+
+| Platform | Container | Notes |
+| --- | --- | --- |
+| iOS | `WKWebView` | Load the deployed HTTPS URL; enable `viewport-fit=cover` for notch safe areas |
+| Android | `WebView` | Same URL; handle back gesture if you add in-app navigation later |
+
+When the mobile shell lands, the root layout sets `viewport-fit: cover` and components use `env(safe-area-inset-*)` for header/footer padding on notched devices.
 
 ## Contributing
 
